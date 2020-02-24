@@ -10,3 +10,5 @@ build/
 Source/ast.xml
 Source/Parser/parser.output
 Source/FScheme.xml
+/Source/jemalloc.dll
+/jemalloc.dll

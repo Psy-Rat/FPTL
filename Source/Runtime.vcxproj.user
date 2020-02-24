@@ -5,7 +5,7 @@
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LocalDebuggerCommandArguments>"..\x64\Release\Test.txt" -n 8 -i -t  --ast-save --scheme-save</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>"C:\Users\PsyRa\Desktop\FPTL-master\Test2.txt" -n 8 -i -t  --ast-save --scheme-save</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
 </Project>

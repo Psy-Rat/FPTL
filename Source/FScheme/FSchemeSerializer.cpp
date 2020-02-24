@@ -33,164 +33,182 @@ namespace FPTL
 			}
 			else
 			{
-				Utils::OpenTag(mFile, "Reference");
-				mFile << res.first->second;
-				Utils::CloseTag(mFile, "Reference");
+				Utils::XMLDomElement ref = Utils::XMLDomElement("Reference");
+				ref.addAttribute("refID", std::to_string(1 + res.first->second));
+				ref.close(mFile);
 			}
 		}
 
 		void FSchemeSerializer::visit(const FFunctionNode* node)
 		{
-			Utils::OpenTag(mFile, "Function");
+			Utils::XMLDomElement func = Utils::XMLDomElement("Function");
 			{
-				mFile << "<Id>" << id << "</Id>";
-				mFile << "<Hard>" << node->isLong() << "</Hard>";
-				mFile << "<Name>" << node->name() << "</Name>";
-				mFile << "<Line>" << node->line() << "</Line>";
-				mFile << "<Column>" << node->col() << "</Column>";
+				func.addAttribute("ID", std::to_string(id));
+				func.addAttribute("Hard", std::to_string(node->isLong()));
+				func.addAttribute("Name", node->name());
+				func.addAttribute("Line", std::to_string(node->line()));
+				func.addAttribute("Column", std::to_string(node->col()));
 			}
-			Utils::CloseTag(mFile, "Function");
+			func.close(mFile);
 		}
 
 		void FSchemeSerializer::visit(const FParallelNode* node)
 		{
-			Utils::OpenTag(mFile, "Parallel");
+			Utils::XMLDomElement par = Utils::XMLDomElement("Parallel");
 			{
-				mFile << "<Id>" << id << "</Id>";
-				mFile << "<Hard>" << node->isLong() << "</Hard>";
-
-				Utils::OpenTag(mFile, CHILDS);
+				par.addAttribute("ID", std::to_string(id));
+				par.addAttribute("Hard", std::to_string(node->isLong()));
+				par.closeAttributes(mFile);
 				{
-					Utils::OpenTag(mFile, "Left");
+					Utils::XMLDomElement left = Utils::XMLDomElement("Left");
+					left.closeAttributes(mFile);
 					tryVisit(node->left());
-					Utils::CloseTag(mFile, "Left");
-
-					Utils::OpenTag(mFile, "Right");
-					tryVisit(node->right());
-					Utils::CloseTag(mFile, "Right");
+					left.close(mFile);
 				}
-				Utils::CloseTag(mFile, CHILDS);
+				{
+					Utils::XMLDomElement right = Utils::XMLDomElement("Right");
+					right.closeAttributes(mFile);
+					tryVisit(node->right());
+					right.close(mFile);
+				}
 			}
-			Utils::CloseTag(mFile, "Parallel");
+			par.close(mFile);
 		}
 
 		void FSchemeSerializer::visit(const FSequentialNode* node)
 		{
-			Utils::OpenTag(mFile, "Sequential");
+			Utils::XMLDomElement seq = Utils::XMLDomElement("Sequential");
 			{
-				mFile << "<Id>" << id << "</Id>";
-				mFile << "<Hard>" << node->isLong() << "</Hard>";
-
-				Utils::OpenTag(mFile, CHILDS);
+				seq.addAttribute("ID", std::to_string(id));
+				seq.addAttribute("Hard", std::to_string(node->isLong()));
+				seq.closeAttributes(mFile);
 				{
-					Utils::OpenTag(mFile, "First");
+					Utils::XMLDomElement first = Utils::XMLDomElement("First");
+					first.closeAttributes(mFile);
 					tryVisit(node->first());
-					Utils::CloseTag(mFile, "First");
-
-					Utils::OpenTag(mFile, "Second");
-					tryVisit(node->second());
-					Utils::CloseTag(mFile, "Second");
+					first.close(mFile);
 				}
-				Utils::CloseTag(mFile, CHILDS);
+
+				{
+					Utils::XMLDomElement second = Utils::XMLDomElement("Second");
+					second.closeAttributes(mFile);
+					tryVisit(node->second());
+					second.close(mFile);
+				}
 			}
-			Utils::CloseTag(mFile, "Sequential");
+			seq.close(mFile);
 		}
 
 		void FSchemeSerializer::visit(const FConditionNode* node)
 		{
-			Utils::OpenTag(mFile, "Condition");
+			Utils::XMLDomElement cond = Utils::XMLDomElement("Condition");
 			{
-				mFile << "<Id>" << id << "</Id>";
-				mFile << "<Hard>" << node->isLong() << "</Hard>";
+				cond.addAttribute("ID", std::to_string(id));
+				cond.addAttribute("Hard", std::to_string(node->isLong()));
+				cond.closeAttributes(mFile);
 
-				Utils::OpenTag(mFile, CHILDS);
 				{
-					Utils::OpenTag(mFile, "Condition");
+					Utils::XMLDomElement rule = Utils::XMLDomElement("Rule");
+					rule.closeAttributes(mFile);
 					tryVisit(node->condition());
-					Utils::CloseTag(mFile, "Condition");
-
-					Utils::OpenTag(mFile, "Then");
-					tryVisit(node->trueBranch());
-					Utils::CloseTag(mFile, "Then");
-
-					Utils::OpenTag(mFile, "Else");
-					tryVisit(node->falseBranch());
-					Utils::CloseTag(mFile, "Else");
+					rule.close(mFile);
 				}
-				Utils::CloseTag(mFile, CHILDS);
+
+				{
+					Utils::XMLDomElement then = Utils::XMLDomElement("Then");
+					then.closeAttributes(mFile);
+					tryVisit(node->trueBranch());
+					then.close(mFile);
+				}
+
+				{
+					Utils::XMLDomElement otherwise = Utils::XMLDomElement("Else");
+					otherwise.closeAttributes(mFile);
+					tryVisit(node->falseBranch());
+					otherwise.close(mFile);
+				}
 			}
-			Utils::CloseTag(mFile, "Condition");
+			cond.close(mFile);
 		}
 
 		void FSchemeSerializer::visit(const FTakeNode* node)
 		{
-			Utils::OpenTag(mFile, "Take");
+			Utils::XMLDomElement take = Utils::XMLDomElement("Take");
 			{
-				mFile << "<Id>" << id << "</Id>";
-				mFile << "<Hard>" << node->isLong() << "</Hard>";
-				mFile << "<Index>" << node->index() << "</Index>";
-				mFile << "<Line>" << node->line() << "</Line>";
-				mFile << "<Column>" << node->col() << "</Column>";
+				take.addAttribute("ID", std::to_string(id));
+				take.addAttribute("Hard", std::to_string(node->isLong()));
+				take.addAttribute("Index", std::to_string(node->index()));
+				take.addAttribute("Line", std::to_string(node->line()));
+				take.addAttribute("Column", std::to_string(node->col()));
 			}
-			Utils::CloseTag(mFile, "Take");
+			take.close(mFile);
 		}
 
 		void FSchemeSerializer::visit(const FConstantNode* node)
 		{
-			Utils::OpenTag(mFile, "Constant");
+
+			Utils::XMLDomElement constant = Utils::XMLDomElement("Constant");
 			{
-				mFile << "<Id>" << id << "</Id>";
-				mFile << "<Hard>" << node->isLong() << "</Hard>";
-				mFile << "<Type>" << node->type() << "</Type>";
-				mFile << "<Value>";
-				node->data().getOps()->print(node->data(), mFile);
-				mFile << "</Value>";
-				mFile << "<Line>" << node->line() << "</Line>";
-				mFile << "<Column>" << node->col() << "</Column>";
+				std::stringstream value;
+				node->data().getOps()->print(node->data(), value);
+
+				constant.addAttribute("ID", std::to_string(id));
+				constant.addAttribute("Hard", std::to_string(node->isLong()));
+				constant.addAttribute("Type", std::string(node->type()));
+				constant.addAttribute("Line", std::to_string(node->line()));
+				constant.addAttribute("Column", std::to_string(node->col()));
+				constant.addAttribute("Value", value.str());
+
 			}
-			Utils::CloseTag(mFile, "Constant");
+			constant.close(mFile);
 		}
 
 		void FSchemeSerializer::visit(const FStringConstant* node)
 		{
-			Utils::OpenTag(mFile, "String");
+			Utils::XMLDomElement string = Utils::XMLDomElement("String");
 			{
-				mFile << "<Id>" << id << "</Id>";
-				mFile << "<Hard>" << node->isLong() << "</Hard>";
-				mFile << "<Type>" << node->type() << "</Type>";
-				mFile << "<Value>" << node->str() << "</Value>";
-				mFile << "<Line>" << node->line() << "</Line>";
-				mFile << "<Column>" << node->col() << "</Column>";
+
+				string.addAttribute("ID", std::to_string(id));
+				string.addAttribute("Hard", std::to_string(node->isLong()));
+				string.addAttribute("Type", std::string(node->type()));
+				string.addAttribute("Line", std::to_string(node->line()));
+				string.addAttribute("Column", std::to_string(node->col()));
+				string.addAttribute("Value", node->str());
+
 			}
-			Utils::CloseTag(mFile, "String");
+			string.close(mFile);
 		}
 
 		void FSchemeSerializer::visit(const FScheme* scheme)
 		{
-			Utils::OpenTag(mFile, "Scheme");
+			Utils::XMLDomElement sch = Utils::XMLDomElement("Scheme");
 			{
-				mFile << "<Id>" << id << "</Id>";
-				mFile << "<Hard>" << scheme->isLong() << "</Hard>";
-				mFile << "<Name>" << scheme->name() << "</Name>";
-				Utils::OpenTag(mFile, CHILDS);
+				sch.addAttribute("ID", std::to_string(id));
+				sch.addAttribute("Hard", std::to_string(scheme->isLong()));
+				sch.addAttribute("Name", scheme->name());
+				sch.closeAttributes(mFile);
 				{
-					mFile << "<FirstNode>";
+					Utils::XMLDomElement fnode = Utils::XMLDomElement("FirstNode");
+					fnode.closeAttributes(mFile);
 					tryVisit(scheme->firstNode());
-					mFile << "</FirstNode>";
+					fnode.close(mFile);
 				}
-				Utils::CloseTag(mFile, CHILDS);
-				mFile << "<Definitions>";
+
 				{
+					Utils::XMLDomElement defs = Utils::XMLDomElement("Definitions");
+					defs.closeAttributes(mFile);
 					for (auto element : scheme->mDefinitions)
 					{
-						Utils::OpenTag(mFile, element.first);
+						Utils::XMLDomElement def_elem = Utils::XMLDomElement(element.first);
+						def_elem.closeAttributes(mFile);
 						tryVisit(element.second);
-						Utils::CloseTag(mFile, element.first);
+						def_elem.close(mFile);
 					}
+					defs.close(mFile);
 				}
-				mFile << "</Definitions>";
+
 			}
-			Utils::CloseTag(mFile, "Scheme");
+			sch.close(mFile);
 		}
 	}
 }
